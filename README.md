@@ -1,112 +1,132 @@
-```markdown
-# 🔐 Web-Based Biometric Authentication System  
-### Face Recognition + OTP Verification  
+# FaceSignIn  
+### Web-Based Biometric Authentication System Using Face Recognition & OTP Verification
 
-![Python](https://img.shields.io/badge/Python-3.8%2B-blue) ![Flask](https://img.shields.io/badge/Flask-2.0%2B-lightgrey) ![OpenCV](https://img.shields.io/badge/OpenCV-4.5%2B-green) ![License](https://img.shields.io/badge/License-MIT-yellow)  
+A secure, research-backed authentication system combining **deep-learning face recognition** with **email-based One-Time Password (OTP)** to offer multi-factor authentication (MFA) directly through a web browser.
 
-A secure, user-friendly **two-factor authentication (2FA) system** that combines **deep learning-based face recognition** with **time-based OTP verification** via email. Built for web deployment with real-time webcam access and modular architecture.
-
----
-
-## 📖 Table of Contents
-- [Overview](#overview)
-- [Key Features](#key-features)
-- [System Architecture](#system-architecture)
-- [Workflow](#workflow)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Performance Metrics](#performance-metrics)
-- [Project Structure](#project-structure)
-- [Future Enhancements](#future-enhancements)
-- [Contributors](#contributors)
-- [Citation](#citation)
-- [License](#license)
+Developed by **Isfaq Evan Dipro**, **Muhit Ibtisham**, **K. A. T. Himantha**  
+Affiliation: **Brain Station Cyber Hub — Department of Intelligence Computing**
 
 ---
 
-## 🎯 Overview
+# 📌 Overview
 
-Traditional password systems are vulnerable to phishing, reuse, and brute-force attacks. This project implements a **dual-factor authentication system** using:
-- **Face Recognition** via OpenFace embeddings
-- **OTP Verification** delivered via email
+FaceSignIn integrates:
+- **Face Recognition** using 128-D OpenFace embeddings  
+- **OTP Verification** via secure email  
+- Real-time browser-based webcam interface  
+- Multi-pose capture for higher accuracy  
+- Automatic embedding retraining after registration  
 
-The system is built with **Flask** (backend), **OpenCV** (face processing), and a modern **JavaScript frontend**, ensuring accessibility through standard webcams.
-
----
-
-## ✨ Key Features
-
-| Feature | Description |
-|---------|-------------|
-| 📸 **Multi-Pose Face Capture** | Guided capture of 10 images (front, left, right) during sign-up |
-| 🧠 **Deep Face Embeddings** | Uses OpenFace model for 128-D facial feature extraction |
-| 🔐 **Cosine Similarity Matching** | Threshold-based face matching (≥0.60 similarity) |
-| 📧 **Email OTP Verification** | 4-digit OTP sent via SMTP (Gmail), valid for 5 minutes |
-| 🔄 **Auto-Retraining** | Model updates after each successful login/sign-up |
-| 🎤 **Voice & Visual Guidance** | Interactive UI with real-time feedback |
-| 📁 **File-Based Storage** | Organized user data, embeddings, and model files |
+The system is lightweight, scalable, and suitable for academic and small-organization deployments.
 
 ---
 
-## 🏗️ System Architecture
-
-### Three-Tier Design
+# 🧠 System Architecture
 
 ```
-Client Tier (Frontend) → Server Tier (Flask Backend) → Storage Tier (File System)
++---------------------+       +------------------------+       +---------------------------+
+|    Client Side      | <-->  |     Flask Backend      | <-->  |       Storage Layer       |
+| (HTML, JS, Webcam)  |       | (Face Rec + OTP APIs)  |       | (Users, Models, Embeds)   |
++---------------------+       +------------------------+       +---------------------------+
+
+1. Capture face
+2. Generate embeddings
+3. Compare with stored profiles
+4. If match → send OTP
+5. Verify OTP → grant access
 ```
 
-#### **Client Tier**
-- HTML5/CSS3/JavaScript
-- Real-time webcam via `getUserMedia()`
-- Responsive & interactive UI
-
-#### **Server Tier**
-- Flask API endpoints
-- OpenCV for face detection & embedding
-- OTP generation & email dispatch
-- Session management
-
-#### **Storage Tier**
+Directory structure:
 ```
 project/
-├── users/           # Per-user folders (images, email)
-├── trainer/         # Embeddings & labels
-├── models/          # OpenFace model file
-└── tmp_signup/      # Temporary registration data
+├── users/         # Per-user data
+├── trainer/       # Embeddings and label files
+├── models/        # OpenFace deep model
+└── tmp_signup/    # Temporary sign-up frames
 ```
 
 ---
 
-## 🔄 Workflow
+# 🔄 Workflow
 
-### 🆕 Sign-Up Process
-1. User enters name & email
-2. System guides to capture **10 facial poses**
-3. Images preprocessed → embeddings generated
-4. OTP sent to email
-5. OTP verified → user registered
+## 🆕 Sign-Up Process
+1. User enters **name & email**
+2. System guides the user through capturing **10 facial poses**  
+   - 4 frontal  
+   - 3 left profile  
+   - 3 right profile  
+3. Images → preprocessing → **128-D embeddings**
+4. System sends a **4-digit OTP** to the provided email
+5. OTP verified → user stored → model retrained
 
-### 🔑 Login Process
+## 🔑 Login Process
 1. User shows face via webcam
-2. Face matched via cosine similarity
-3. If match ≥ 0.60 → OTP sent to registered email
+2. Embedding generated & matched via **cosine similarity**
+3. If similarity **≥ 0.60**, OTP sent to registered email
 4. User enters OTP → access granted
 
 ---
 
-## ⚙️ Installation
+# 🧬 Technical Methodology
 
-### Prerequisites
-- Python 3.8+
+### Face Detection
+- OpenCV Haar Cascade  
+- Histogram equalization for lighting conditions
+
+### Preprocessing
+- Crop with margin  
+- Grayscale  
+- Resize to **96×96**
+
+### Embedding Extraction
+- Model: `nn4.small2.v1.t7` (OpenFace)  
+- Output: **128-dimensional vector**
+
+### Similarity Matching
+```
+similarity = (A · B) / (||A|| ||B||)
+```
+
+### OTP System
+- 4-digit random OTP  
+- Sent using Gmail SMTP (TLS)  
+- Valid for **5 minutes**
+
+### Model Retraining
+- Runs after every successful sign-up or login  
+- Keeps user embeddings updated for accuracy
+
+---
+
+# 📊 Results & Evaluation
+
+| Metric | Result |
+|--------|--------|
+| Face Recognition Accuracy | 90–95% |
+| False Acceptance Rate (FAR) | < 2% |
+| False Rejection Rate (FRR) | ~4% |
+| OTP Delivery Success | 99% |
+| End-to-End Success | ~94% |
+
+**Testing conditions:**
+- Lighting: bright, indoor, dim  
+- Devices: laptop webcam (720p), USB webcam (1080p)  
+- Users tested: 20 over 3 sessions  
+
+---
+
+# ⚙️ Installation
+
+## Prerequisites
+- Python **3.8+**
 - Webcam
-- Gmail account (for SMTP)
+- Gmail account (for SMTP OTP)
 
-### Steps
+## Steps
 ```bash
 # Clone repository
-git clone https://github.com/username/face-otp-auth.git
-cd face-otp-auth
+git clone https://github.com/brainstationcyberhub-coder/facesignin.git
+cd facesignin
 
 # Install dependencies
 pip install -r requirements.txt
@@ -114,7 +134,7 @@ pip install -r requirements.txt
 # Download OpenFace model
 wget https://github.com/cmusatyalab/openface/raw/master/models/openface/nn4.small2.v1.t7 -P models/
 
-# Configure email credentials in config.py
+# Configure your email credentials in config.py
 EMAIL_USER = "your-email@gmail.com"
 EMAIL_PASS = "your-app-password"
 
@@ -124,100 +144,48 @@ python app.py
 
 ---
 
-## 🚀 Usage
-
-1. Open `http://localhost:5000` in browser
-2. **Sign Up**: Follow on-screen prompts to capture face & verify OTP
-3. **Log In**: Show face → receive OTP → enter to authenticate
-4. Access secured dashboard upon success
-
----
-
-## 📊 Performance Metrics
-
-| Metric | Result |
-|--------|--------|
-| Face Recognition Accuracy | 90–95% |
-| False Acceptance Rate (FAR) | < 2% |
-| False Rejection Rate (FRR) | ~4% |
-| OTP Delivery Success Rate | 99% |
-| End-to-End Auth Success | ~94% |
+# 🔒 Security Features
+- OTP expires in 5 minutes  
+- TLS-secured email transport  
+- No raw images stored (embeddings only)  
+- Flask session security  
+- Cosine similarity threshold-based matching  
 
 ---
 
-## 📂 Project Structure
-
-```
-face-otp-auth/
-├── app.py                      # Flask application
-├── config.py                   # Configuration (email, paths)
-├── requirements.txt            # Python dependencies
-├── static/
-│   ├── css/                   # Stylesheets
-│   ├── js/                    # Frontend logic
-│   └── images/                # UI assets
-├── templates/                  # HTML templates
-├── models/
-│   └── nn4.small2.v1.t7       # OpenFace model
-├── users/                      # User data
-├── trainer/                    # Embeddings & labels
-├── tmp_signup/                 # Temporary sign-up data
-└── README.md                   # This file
-```
+# 🧱 Limitations
+- No liveness detection  
+- Local storage (not ideal for large deployments)  
+- Lighting conditions affect accuracy  
+- Embedding encryption not implemented  
 
 ---
 
-## 🔮 Future Enhancements
-
-- [ ] **Liveness Detection** – Blink/motion analysis to prevent spoofing
-- [ ] **Database Integration** – Replace file storage with PostgreSQL/MongoDB
-- [ ] **Advanced Models** – ArcFace or MobileFaceNet for better accuracy
-- [ ] **Encrypted Embeddings** – Homomorphic encryption for privacy
-- [ ] **Mobile App** – Cross-platform app (React Native/Flutter)
-- [ ] **Cloud Deployment** – AWS/Azure with load balancing
-
----
-
-## 👥 Contributors
-
-| Name | Role |
-|------|------|
-| **Isfaq Evan Dipro** | Full-stack development, face recognition, OTP system |
-| **Muhit Ibtisham** | Model training, paper writing, testing coordination |
-| **K. A. T. Himantha** | Data collection, training preparation |
-| **Hossain Seyam** | Research support, presentation materials |
+# 🔮 Future Improvements
+- Add **liveness detection** (blink test, motion prompts)  
+- Migrate to **ArcFace/MobileFaceNet**  
+- Move to SQL/NoSQL database  
+- Implement encrypted embedding storage  
+- Cloud deployment (AWS/Azure)  
+- Mobile app development  
 
 ---
 
-## 📚 Citation
+# 👨‍💻 Authors & Contributions
 
-If you use this project in your research, please cite:
-
-```bibtex
-@article{face_otp_2025,
-  title={Web-Based Biometric Authentication System Using Face Recognition and OTP Verification},
-  author={Dipro, Isfaq Evan and Ibtisham, Muhit and Himantha, K.A.T. and Seyam, Hossain},
-  year={2025},
-  publisher={Brain Station Cyber Hub}
-}
-```
+| Author | Contribution |
+|--------|-------------|
+| **Isfaq Evan Dipro** | Full development, face recognition, OTP, frontend/backend, documentation |
+| **Muhit Ibtisham** | Model optimization, research writing, testing, presentation |
+| **K. A. T. Himantha** | Dataset support, pre-processing, documentation assistance |
+| **Hossain Seyam** | Supporting data collection and presentation |
 
 ---
 
-## 📄 License
+# 📚 References
+- Schroff et al., *FaceNet: A Unified Embedding for Face Recognition*  
+- Viola & Jones, *Real-Time Object Detection*  
+- Jain et al., *Biometric Recognition*  
+- NIST SP 800-63-3  
+- Amos et al., *OpenFace Technical Report*  
 
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
-
----
-
-## 🌐 Connect
-
-For questions or collaborations, contact:  
-📧 **Isfaq Evan Dipro** – evandipro2004@gmail.com  
-🏢 **Brain Station Cyber Hub** – Department of Intelligence Computing  
-
----
-
-**⭐ Star this repo if you found it useful!**  
-**🔁 Fork and contribute to future enhancements.**
-```
