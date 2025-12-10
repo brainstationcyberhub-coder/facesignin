@@ -129,7 +129,9 @@ Decision Threshold:
   • Backup: LBPH if OpenFace unavailable
 ```
 
-### OTP System Specifications:
+## OTP System Specifications:
+
+### OTP Lifecycle Timeline:
 ```mermaid
 gantt
     title OTP Lifecycle Timeline
@@ -137,12 +139,37 @@ gantt
     axisFormat %S s
     
     section OTP Process
-    OTP Generation :0, 1s
-    Email Dispatch :1, 3s
-    User Receives :4, 10s
-    OTP Entry :14, 5s
-    Verification :19, 1s
-    Expiration :after 19, 281s
+    OTP Generation :a1, 0, 1s
+    Email Dispatch :a2, after a1, 3s
+    User Receives :a3, after a2, 10s
+    OTP Entry :a4, after a3, 5s
+    Verification :a5, after a4, 1s
+    Expiration :a6, after a5, 281s
+```
+
+### OTP Timeline Details:
+| Step | Time Range | Duration | Description |
+|------|------------|----------|-------------|
+| **OTP Generation** | 0-1 second | 1s | System generates random 4-digit OTP |
+| **Email Dispatch** | 1-4 seconds | 3s | OTP sent via Gmail SMTP with TLS |
+| **User Receives** | 4-14 seconds | 10s | Email delivery time (variable) |
+| **OTP Entry** | 14-19 seconds | 5s | User inputs received OTP |
+| **Verification** | 19-20 seconds | 1s | System validates OTP |
+| **Expiration Window** | 0-300 seconds | 300s | Total OTP validity period (5 minutes) |
+
+### OTP Technical Specifications:
+```
+OTP Characteristics:
+┌─────────────────────┬─────────────────────────────┐
+│ Parameter           │ Specification               │
+├─────────────────────┼─────────────────────────────┤
+│ OTP Length          │ 4 digits (0000-9999)       │
+│ Validity Period     │ 300 seconds (5 minutes)    │
+│ Generation Method   │ Random number generation    │
+│ Delivery Method     │ Gmail SMTP with TLS        │
+│ Verification Points │ Sign-up and Login          │
+│ Security Features   │ Single-use, time-limited   │
+└─────────────────────┴─────────────────────────────┘
 ```
 
 ## Workflow Processes
@@ -449,5 +476,3 @@ Target Deployment Environments:
 │ Enterprise           │ ███░░░░░░░ │ Not recommended  │
 └──────────────────────┴────────────┴──────────────────┘
 ```
-
-The system demonstrates a secure, web-based authentication solution combining face recognition with OTP verification, suitable for academic and small-scale organizational deployments.
