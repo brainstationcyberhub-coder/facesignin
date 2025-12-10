@@ -58,9 +58,9 @@ login_otp_store  = {}
 SMTP_CONFIG = {
     'host': 'smtp.gmail.com',
     'port': 587,
-    'username': 'brainstationcyberhub@gmail.com',
-    'password': 'ftcedmqawvixvfks',
-    'from_email': 'brainstationcyberhub@gmail.com',
+    'username': 'use your gmail',
+    'password': 'use your gmail password',
+    'from_email': 'use your gmail',
     'from_name': 'DEMO FACE SIGNING'
 }
 
